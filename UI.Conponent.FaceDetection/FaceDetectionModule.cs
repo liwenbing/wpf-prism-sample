@@ -20,7 +20,7 @@ namespace UI.Conponent.FaceDetection
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<Views.FaceDetectionView, ViewModels.FaceDetectionViewModel>();
-
+            containerRegistry.RegisterForNavigation<Views.TextDetectionView, ViewModels.TextDetectionViewModel>();
         }
     }
 }

@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewModels\FaceDetectionViewModel.cs" />
+    <Compile Include="ViewModels\TextDetectionViewModel.cs" />
     <Compile Include="Views\FaceDetectionView.xaml.cs">
       <DependentUpon>FaceDetectionView.xaml</DependentUpon>
     </Compile>
@@ -106,11 +107,18 @@
       <DependentUpon>ImageRecognizerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="FaceDetectionModule.cs" />
+    <Compile Include="Views\TextDetectionView.xaml.cs">
+      <DependentUpon>TextDetectionView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\FaceDetectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ImageRecognizerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TextDetectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

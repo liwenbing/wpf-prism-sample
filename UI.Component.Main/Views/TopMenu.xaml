@@ -42,7 +42,7 @@
                 <MenuItem Header="PLC"></MenuItem>
             </MenuItem>
             <MenuItem Header="Opencv" >
-                <MenuItem Header="Text Detection"></MenuItem>
+                <MenuItem Header="Text Detection" Command="{Binding NavigateCommand}" CommandParameter="TextDetectionView"></MenuItem>
                 <MenuItem Header="Face Detection" Command="{Binding NavigateCommand}" CommandParameter="FaceDetectionView"></MenuItem>
                 <MenuItem Header="DEMO Detection"></MenuItem>
             </MenuItem>
