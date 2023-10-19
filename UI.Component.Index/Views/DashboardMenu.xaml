@@ -1,0 +1,13 @@
+﻿<mah:HamburgerMenuItemCollection  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+            x:Class="UI.Component.Index.Views.DashboardMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI.Component.Index.Views"
+             mc:Ignorable="d" >
+    <mah:HamburgerMenuHeaderItem Label="Dashboard" />
+    <mah:HamburgerMenuItem ToolTip="1" Label="go to d1" CommandParameter="Dashboard1"/>
+    <mah:HamburgerMenuItem ToolTip="2" Label="go to d2" CommandParameter="Dashboard2"/>
+    <mah:HamburgerMenuSeparatorItem />
+</mah:HamburgerMenuItemCollection>

@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="UI.Component.Main.Views.ContentNavigate"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI.Component.Main.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:core="clr-namespace:Core;assembly=Core" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--  This is the template for the menu items.  -->
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type mah:HamburgerMenuIconItem}">
+                <Grid Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{Binding Icon}"
+                                Focusable="False"
+                                IsTabStop="False" />
+                    <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           Text="{Binding Label}" />
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Border Grid.Row="0"
+            Margin="0 0 0 0"
+            BorderBrush="{DynamicResource MahApps.Brushes.Gray7}"
+            BorderThickness="1">
+            <mah:HamburgerMenu x:Name="HamburgerMenuControl"
+                HamburgerWidth="48"
+                IsPaneOpen="True"
+                ItemTemplate="{StaticResource MenuItemTemplate}"
+                OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                prism:RegionManager.RegionName="{x:Static core:RegionNames.MenuRegion}"
+                               Loaded="HamburgerMenuControl_OnLoaded" 
+                               ItemInvoked="HamburgerMenuControl_OnItemInvoked"
+                VerticalScrollBarOnLeftSide="False">
+                <ContentControl x:Name="HamburgerMenuContent" prism:RegionManager.RegionName="SubContentRegion"></ContentControl>
+            </mah:HamburgerMenu>
+        </Border>
+    </Grid>
+</UserControl>
