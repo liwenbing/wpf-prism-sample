@@ -1,95 +1,175 @@
-﻿using OpenCvSharp;
+﻿using Core.Tools;
+using OpenCvSharp;
+using OpenCvSharp.Dnn;
+using OpenCvSharp.Extensions;
+using OpenCvSharp.Text;
+using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Linq;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace UI.Conponent.FaceDetection.ViewModels
 {
-    public class TextDetectionViewModel
+    
+    public class TextDetectionViewModel: BindableBase, INavigationAware
     {
-
+       
         private Mat _matImage;
         private Mat _grayImage;
         private Mat _kernelRect;
         private Mat _threshMat;
-        private Mat _dilationMat;
+        private Mat _dilation1Mat;
+        private Mat _ErodeMat;
+        private Mat _dilation2Mat;
+        private Mat _sobel;
 
-        private double thresh1;
+        private string _ImageDir;
+        public string ImageDir { get { return _ImageDir; } set { _ImageDir = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _orgBitmapImage;
+        public BitmapImage OrgBitmapImage { get { return _orgBitmapImage; } set { _orgBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _deteBitmapImage;
+        public BitmapImage DeteBitmapImage { get { return _deteBitmapImage; } set { _deteBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _grayBitmapImage;
+        public BitmapImage grayBitmapImage { get { return _grayBitmapImage; } set { _grayBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _SobelBitmapImage;
+        public BitmapImage SobelBitmapImage { get { return _SobelBitmapImage; } set { _SobelBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _ThreshBitmapImage;
+        public BitmapImage ThreshBitmapImage { get { return _ThreshBitmapImage; } set { _ThreshBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _Dilate1BitmapImage;
+        public BitmapImage Dilate1BitmapImage { get { return _Dilate1BitmapImage; } set { _Dilate1BitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _ErodeBitmapImage;
+        public BitmapImage ErodeBitmapImage { get { return _ErodeBitmapImage; } set { _ErodeBitmapImage = value; RaisePropertyChanged(); } }
+
+        public BitmapImage _Dilate2BitmapImage;
+        public BitmapImage Dilate2BitmapImage { get { return _Dilate2BitmapImage; } set { _Dilate2BitmapImage = value; RaisePropertyChanged(); } }
+
+        private string[] imageNames;
+        private int ImagePtr = 0;
+
+        public ICommand PreviousCommand { get; }
+        public ICommand NextCommand { get; }
 
         public TextDetectionViewModel()
         {
+            //TextDetectionModel_DB("");
+
+            ImageDir = "C:\\Users\\Administrator\\Desktop";
+            imageNames = Directory.GetFiles(ImageDir, "*.*", SearchOption.AllDirectories).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".png")).ToArray();
+
+            PreviousCommand = new DelegateCommand(PreviousImage);
+            NextCommand = new DelegateCommand(NextImage);
+            //ocr.Run
+            
+        }
+
+        private void NextImage()
+        {
+            ++this.ImagePtr;
+            if (this.ImagePtr >= imageNames.Length)
+            {
+                this.ImagePtr = imageNames.Length - 1;
+                return;
+            }
+
+            var imageName = imageNames[this.ImagePtr];
+            _matImage = Cv2.ImRead(imageName);
+
             Detection();
         }
 
+        private void PreviousImage()
+        {
+            --this.ImagePtr;
+            if (this.ImagePtr < 0)
+            {
+                this.ImagePtr = 0;
+                return;
+            }
+            var imageName = imageNames[this.ImagePtr];
+            _matImage = Cv2.ImRead(imageName);
+            if (_matImage.Empty()) { return; }
+
+            Detection();
+        }
 
         private void Detection() 
         {
-            _matImage = OpenCvSharp.Cv2.ImRead("C:\\Users\\Administrator\\Desktop\\1697593797802.png");
+            OrgBitmapImage = GetBitmapImage(_matImage); ;
 
-            _grayImage = new Mat();
             Gray();
+            grayBitmapImage = GetBitmapImage(_grayImage);
 
-            _kernelRect = new Mat();
-            _threshMat = new Mat();
+            Sobel();
+            SobelBitmapImage = GetBitmapImage(_sobel);
+
             Threshold();
+            ThreshBitmapImage = GetBitmapImage(_threshMat);
 
-            
-            _dilationMat = new Mat();   
             Dilate();
+            Dilate1BitmapImage = GetBitmapImage(_dilation1Mat);
+            ErodeBitmapImage = GetBitmapImage(_ErodeMat);
+            Dilate2BitmapImage = GetBitmapImage(_dilation2Mat);
 
+            //Detection();
             GetContours();
+            DeteBitmapImage = GetBitmapImage(_matImage);
         }
 
         private void Gray()
         {
+            _grayImage = new Mat();
             Cv2.CvtColor(_matImage, _grayImage, ColorConversionCodes.BGR2GRAY);
 
-            Cv2.ImWrite($"TextDetection_Gray_{Guid.NewGuid()}.jpg", _grayImage);
+
+        }
+
+        private void Sobel()
+        {
+            //1.Sobel算子，x方向求梯度
+            _sobel = new Mat();
+            Cv2.Sobel(_grayImage, _sobel, MatType.CV_8U, 1, 0, 3);
+
         }
 
         private void Threshold()
         {
-            Mat dst = new Mat();
-            thresh1 = Cv2.Threshold(_grayImage, _grayImage, 180, 255, ThresholdTypes.BinaryInv);
-
-            //Mat mat = new Mat();
-            //Cv2.BitwiseAnd(dst, dst, mat);
-            thresh1 = Cv2.Threshold(_grayImage, _threshMat, 100, 255, ThresholdTypes.BinaryInv);
-
-
-            //Cv2.Threshold(mat, _threshMat, 100, 255, ThresholdTypes.Otsu);
-
-            Cv2.ImWrite($"TextDetection_Thresh_{Guid.NewGuid()}.jpg", _threshMat);
+            _threshMat = new Mat();
+            Cv2.Threshold(_sobel, _threshMat, 0, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
         }
 
         private void Dilate()
         {
-            Mat element1 = new Mat();
-            Mat element2 = new Mat();
             OpenCvSharp.Size size1 = new OpenCvSharp.Size(30, 9);
             OpenCvSharp.Size size2 = new OpenCvSharp.Size(24, 6);
 
-            element1 = Cv2.GetStructuringElement(MorphShapes.Rect, size1);
-            element2 = Cv2.GetStructuringElement(MorphShapes.Rect, size2);
+            Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, size1);
+            Mat element2 = Cv2.GetStructuringElement(MorphShapes.Rect, size2);
 
-            Mat dilation2 = new Mat();
-            _kernelRect = Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(18, 18));
-            Cv2.Dilate(_threshMat, dilation2, _kernelRect, null ,1);
+            _dilation1Mat = new Mat();
+            //_kernelRect = Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(3, 3));
+            Cv2.Dilate(_threshMat, _dilation1Mat, element2);
 
-            Cv2.ImWrite($"TextDetection_Dilate_{Guid.NewGuid()}.jpg", dilation2);
-
-
-            Mat erosion = new Mat();
-            Cv2.Erode(dilation2, erosion, element1);
+            _ErodeMat = new Mat();
+            //腐蚀
+            Cv2.Erode(_dilation1Mat, _ErodeMat, element1);
 
             //6. 再次膨胀，让轮廓明显一些
-            //Mat dilation2 = new Mat();
-            Cv2.Dilate(erosion, _dilationMat, element2, null, 2);
-            Cv2.ImWrite($"TextDetection_Dilate2_{Guid.NewGuid()}.jpg", _dilationMat);
+            _dilation2Mat = new Mat();
+            Cv2.Dilate(_ErodeMat, _dilation2Mat, element2, null, 1);
         }
 
         private void GetContours()
@@ -97,7 +177,7 @@ namespace UI.Conponent.FaceDetection.ViewModels
             Scalar color = new Scalar(0, 0, 255);
             OpenCvSharp.Point[][] contours;
             HierarchyIndex[] hierarchy;
-            Cv2.FindContours(_dilationMat, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxNone, null);
+            Cv2.FindContours(_dilation2Mat, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxNone, null);
 
             if (contours.Length > 0)
             {
@@ -113,5 +193,45 @@ namespace UI.Conponent.FaceDetection.ViewModels
             Cv2.ImWrite($"TextDetection_End_{Guid.NewGuid()}.jpg", _matImage);
         }
 
+        private BitmapImage GetBitmapImage(Mat image) 
+        {
+            var bitmap = image.ToBitmap();
+            MemoryStream ms = new MemoryStream();
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            byte[] bytes = ms.ToArray();
+            ms.Close();
+
+            // BitmapImage 固定格式
+            BitmapImage bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = new MemoryStream(bytes);
+            bitmapImage.EndInit();
+
+            return bitmapImage;
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            var imageName = imageNames[this.ImagePtr];
+            _matImage = Cv2.ImRead(imageName);
+
+            Rect[] rects;
+            float[] asdasda;
+            TextDetectorCNN textDetector = TextDetectorCNN.Create("", "DB_IC15_resnet50.onnx");
+            textDetector.Detect(_matImage, out rects, out asdasda);
+
+            Detection();
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

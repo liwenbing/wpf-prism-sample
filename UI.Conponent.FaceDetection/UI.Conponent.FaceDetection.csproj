@@ -142,6 +142,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="onnx\crnn_cs_CN.onnx" />
+    <None Include="onnx\DB_IC15_resnet50.onnx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
