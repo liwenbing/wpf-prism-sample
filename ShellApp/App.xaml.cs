@@ -13,6 +13,7 @@ using Prism.Modularity;
 using Prism.Regions;
 using Prism.Unity;
 using UI.Component.Charts;
+using UI.Component.Communication;
 using UI.Component.Index;
 using UI.Component.Login;
 using UI.Component.Main;
@@ -48,6 +49,7 @@ namespace ShellApp
             moduleCatalog.AddModule<ChartsModule>();
             moduleCatalog.AddModule<FaceDetectionModule>();
             moduleCatalog.AddModule<DashboardModule>();
+            moduleCatalog.AddModule<CommunicationModule>();
         }
 
         protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings regionAdapterMappings)

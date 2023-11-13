@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Size = OpenCvSharp.Size;
 
 namespace UI.Conponent.FaceDetection.ViewModels
 {
@@ -215,10 +216,18 @@ namespace UI.Conponent.FaceDetection.ViewModels
             var imageName = imageNames[this.ImagePtr];
             _matImage = Cv2.ImRead(imageName);
 
-            Rect[] rects;
-            float[] asdasda;
-            TextDetectorCNN textDetector = TextDetectorCNN.Create("", "DB_IC15_resnet50.onnx");
-            textDetector.Detect(_matImage, out rects, out asdasda);
+            //Rect[] rects;
+            //float[] asdasda;
+            //TextDetectorCNN textDetector = TextDetectorCNN.Create("onnx/crnn_cs_CN.onnx", "onnx/DB_IC15_resnet50.onnx");
+            //textDetector.Detect(_matImage, out rects, out asdasda);
+
+            Net net = CvDnn.ReadNetFromOnnx("onnx/crnn_cs_CN.onnx");
+            
+            var blob = CvDnn.BlobFromImage(_matImage);
+            net.SetInput(blob);
+
+            var detection = net.Forward();
+            var detectionMat = new Mat(detection.Size(2), detection.Size(3),MatType.CV_32F, detection.Ptr(0));
 
             Detection();
         }

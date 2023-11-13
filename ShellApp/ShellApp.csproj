@@ -153,6 +153,10 @@
       <Project>{011a5fa4-195d-4cf1-be2c-967fb0ba28a6}</Project>
       <Name>UI.Component.Charts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UI.Component.Communication\UI.Component.Communication.csproj">
+      <Project>{82E2AF24-1813-4644-867E-5202C0941283}</Project>
+      <Name>UI.Component.Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UI.Component.Index\UI.Component.Dashboard.csproj">
       <Project>{A40E4CA4-9F83-4CEF-A37A-0ED1BCE7F0B7}</Project>
       <Name>UI.Component.Dashboard</Name>

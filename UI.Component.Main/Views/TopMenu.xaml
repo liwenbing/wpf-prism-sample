@@ -39,7 +39,7 @@
                 <MenuItem Header="TCP"></MenuItem>
                 <MenuItem Header="Serial port"></MenuItem>
                 <MenuItem Header="USB"></MenuItem>
-                <MenuItem Header="PLC"></MenuItem>
+                <MenuItem Header="Modbus" Command="{Binding NavigateCommand}" CommandParameter="ModbusView"></MenuItem>
             </MenuItem>
             <MenuItem Header="Opencv" >
                 <MenuItem Header="Text Detection" Command="{Binding NavigateCommand}" CommandParameter="TextDetectionView"></MenuItem>

@@ -635,7 +635,7 @@ namespace UI.Conponent.FaceDetection.ViewModels
 
             //var face = FaceDetection(img);
 
-            //Train();
+            Train();
 
         }
 

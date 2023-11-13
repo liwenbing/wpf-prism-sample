@@ -15,5 +15,6 @@ namespace Core
         public const string MenuRegion = "MenuRegion";
         public const string LoginRegion = "LoginRegion";
         public const string ChartsRegion = "ChartsRegion";
+        public const string CommunicationRegion = "CommunicationRegion";
     }
 }
